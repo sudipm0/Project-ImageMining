@@ -18,12 +18,13 @@ from analyze import Analyze
 from food5k import load_data
 from anomalydata import load_anomaly_data
 from clustering import Cluster
+from gridsearch import GridSearch
 
 def arguments():
   parser = argparse.ArgumentParser()
   parser.add_argument("--backbone", default="resnet",help="Specify the backbone: vgg/resnet")
-  parser.add_argument("--dataset", default="food5k",help="Specify the backbone: food5k/PascalVOC")
-  parser.add_argument("--task", default="anomaly",help="Specify the backbone: anomaly/cluster")
+  parser.add_argument("--dataset", default="food5k",help="Specify the dataset: food5k/PascalVOC")
+  parser.add_argument("--task", default="anomaly",help="Specify the task: anomaly/cluster")
   return(parser)
 
 if __name__ == '__main__':
@@ -32,9 +33,9 @@ if __name__ == '__main__':
   args = parser.parse_args()
   
   if args.dataset == "PascalVOC" :
-    (x_train,num_train_samples,x_test,y_test,num_test_samples) = load_anomaly_data()
+    (x_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_anomaly_data()
   else:
-    (x_train,num_train_samples,x_test,y_test,num_test_samples) = load_data()
+    (x_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_data()
 
   if args.backbone == "vgg":
     model = VGG16(include_top=False, weights='imagenet')
@@ -50,7 +51,8 @@ if __name__ == '__main__':
     features_test_array = features_test_array.reshape(num_test_samples, -1)
     # print('test array shape: ',features_test_array.shape)
     # print('train array shape: ',features_train_array.shape)
-    Analyze(features_train_array,features_test_array,y_test)
+    #GridSearch(features_train_array,features_test_array)
+    Analyze(features_train_array,features_test_array,y_test,testoutputfile)
    
 
   if args.task == "cluster":

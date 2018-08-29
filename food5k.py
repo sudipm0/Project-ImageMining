@@ -15,7 +15,7 @@ from imagenet_utils import decode_predictions, preprocess_input
 def load_data():
 	cwd = os.getcwd()
 	path = cwd+'\\images\\'
-	saveddatapath ='SavedData'
+	saveddatapath ='SavedData\\Food5k'
 	trainingdir = 'Food-5K\\training'
 	testdir = 'Food-5K\\validation'
 
@@ -41,9 +41,10 @@ def load_data():
 			x = image.img_to_array(img)
 			x = np.expand_dims(x, axis=0)
 			x = preprocess_input(x)
-			x_train[(i - 1):i, :, :, :] = x
+			x_train[(i-1):i, :, :, :] = x
 		except FileNotFoundError:
 			print("The file does not exist",img_path)
+
 
 	#Load up test data sample from testdir
 	i = 0
@@ -60,15 +61,17 @@ def load_data():
 				x = image.img_to_array(img)
 				x = np.expand_dims(x, axis=0)
 				x = preprocess_input(x)
-				x_test[(i - 1):i, :, :, :] = x
-				y_test[(i - 1) :i] = label
+				x_test[(i-1):i, :, :, :] = x
+				y_test[(i-1) :i] = label
 				i += 1
 	print('Saving Data arrays')
+	if not os.path.exists(saveddatafolder):
+		os.makedirs(saveddatafolder)
 	np.save(os.path.join(saveddatafolder,'x_train'),x_train,allow_pickle=True)
 	np.save(os.path.join(saveddatafolder,'x_test'),x_test,allow_pickle=True)
 	np.save(os.path.join(saveddatafolder,'y_test'),y_test,allow_pickle=True)
 
-	return (x_train,x_test,y_test)
+	return (x_train,num_train_samples,x_test,y_test,num_test_samples)
 
 if __name__ == '__main__':
 	(x_train,x_test,y_test) = load_data()

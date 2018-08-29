@@ -14,7 +14,7 @@ from imagenet_utils import decode_predictions, preprocess_input
 def load_anomaly_data():
 	cwd = os.getcwd()
 	path = cwd+'\\images\\'
-	saveddatapath ='SavedData'
+	saveddatapath ='SavedData\\AnomalyData'
 	trainingdir = 'VOC2007\\JPEGImages'
 	testdir = 'Abnormal_Object_Dataset'
 
@@ -40,7 +40,7 @@ def load_anomaly_data():
 				x = image.img_to_array(img)
 				x = np.expand_dims(x, axis=0)
 				x = preprocess_input(x)
-				x_train[(j - 1):j, :, :, :] = x
+				x_train[(j-1):j, :, :, :] = x
 				j += 1
 
 	i = 0
@@ -52,11 +52,11 @@ def load_anomaly_data():
 				x = image.img_to_array(img)
 				x = np.expand_dims(x, axis=0)
 				x = preprocess_input(x)
-				x_test[(i - 1):i, :, :, :] = x
-				y_test[(i - 1) :i] = -1				
+				x_test[(i-1):i, :, :, :] = x
+				y_test[(i-1):i] = -1				
 				i += 1
 	
-	return (x_train,x_test,y_test)
+	return (x_train,num_train_samples,x_test,y_test,num_test_samples)
 
 if __name__ == '__main__':
 	(x_train,x_test,y_test) = load_anomaly_data()

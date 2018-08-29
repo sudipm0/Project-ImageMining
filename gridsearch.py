@@ -7,9 +7,10 @@ def GridSearch():
 	parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
 	svc = svm.SVC()
 	clf = GridSearchCV(svc, parameters)	
+	
+	x_test = x_test.reshape(num_test_samples, -1) 
 	print(x_test.shape)
 	print(y_test.shape)
-	
 	clf.fit(x_test, y_test)
 	print(clf.cv_results_.keys())
 	return(clf)

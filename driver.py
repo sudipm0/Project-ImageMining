@@ -10,7 +10,7 @@ Approach to the solution(s):
   1. We use CNN pre-trained models to extract features from images. By default, we choose ResNet50 in this case. 
   We exclude the classification/prediction layer.
 
-  2. Dimension of feature space matrix of shape e.g. (1L,1L,1L) is then reduced to n_components using PCA.
+  2. Dimension of feature space matrix of shape e.g. (1L,1L,1L,2048L) for ResNet50 is then reduced to n_components using PCA.
 
   Now For Novelty & Outlier detection, we choose OneClassSVM & IsolationForest.
 
@@ -21,7 +21,7 @@ Approach to the solution(s):
 This is the driver program for the project.
 rus as:
   python driver.py
-  
+
   [arguments]   [default]   [options]
    --backbone     resnet      resnet/vgg
    --dataset      food5k      food5k/PascalVOC
@@ -90,11 +90,11 @@ if __name__ == '__main__':
    
 
   if args.task == "cluster":
-    features_train_array = model.predict(x_train)
-    features_train_array = features_train_array.reshape(num_train_samples, -1) #reshape to 2d from 4d array
-      
-    #features_test_array = model.predict(x_test)
-    #features_test_array = features_test_array.reshape(num_test_samples, -1)    
+    features_train_array = model.predict(x_train)    
+    features_train_array_np = np.array(features_train_array)
+    features_train_array_list.append(features_train_array_np.flatten())        
+    features_train_array_list_np = np.array(features_train_array_list)
+    
     Cluster(features_train_array,num_train_samples)
 
 

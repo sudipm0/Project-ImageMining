@@ -30,7 +30,7 @@ def Cluster(features,sample_size):
 	#val_sample = np.array(sample_size)[np.in1d(clust_preds, val_clusters)]
 
 	#print('val sample' , val_sample)
-
+	kmeans = KMeans(n_clusters=2, random_state=0).fit(vgg16_feature_list_np)
 	reduced_data = PCA(n_components=512).fit_transform(features)
 	km = KMeans(n_clusters = N_CLUSTS, n_init=10)	
 	km.fit(reduced_data)

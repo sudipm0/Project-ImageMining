@@ -30,8 +30,9 @@ def load_anomaly_data():
 	print('Number of training samples: ', num_train_samples)
 	print('Number of test samples: ', num_test_samples)
 	
-	x_train = np.empty((num_train_samples, 224, 224,3), dtype='uint8') #This should be increased.
-	x_test = np.empty((num_test_samples, 224, 224,3), dtype='uint8')	
+	x_train = np.empty((num_train_samples, 224, 224,3), dtype='uint8')
+	x_test = np.empty((num_test_samples, 224, 224,3), dtype='uint8')
+	y_train = np.empty((num_train_samples), dtype='int8')	
 	y_test = np.empty((num_test_samples), dtype='int8')
 
 	if not os.path.exists(saveddatafolder):
@@ -47,6 +48,7 @@ def load_anomaly_data():
 				x = np.expand_dims(x, axis=0)
 				x = preprocess_input(x)
 				x_train[(j-1):j, :, :, :] = x
+				y_train[(j-1) :j] = 1
 				j += 1
 
 	i = 0
@@ -65,7 +67,7 @@ def load_anomaly_data():
 					writer.writerow([img_path, '1'])	#let's write everything positive		
 					i += 1
 	
-	return (x_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile)
+	return (x_train,y_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile)
 
 if __name__ == '__main__':
 	(x_train,x_test,y_test) = load_anomaly_data()

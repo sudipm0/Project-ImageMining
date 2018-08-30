@@ -1,4 +1,34 @@
-from __future__ import print_function
+""" 
+Project: Effifient Image Mining & Classification Techniques
+Project Goal:
+  The project aims to study on below topics/problems:
+    1. If a new image is added to a folder, is it causing anomaly in the existing dataset? e.g. training dataset is already labeled
+    2. IF a model is trained with a set of images can it detect contamination/anomaly in another folder?
+    3. Cluster images by their feature set.
+
+Approach to the solution(s):
+  1. We use CNN pre-trained models to extract features from images. By default, we choose ResNet50 in this case. 
+  We exclude the classification/prediction layer.
+
+  2. Dimension of feature space matrix of shape e.g. (1L,1L,1L) is then reduced to n_components using PCA.
+
+  Now For Novelty & Outlier detection, we choose OneClassSVM & IsolationForest.
+
+  OneClassSVM is used as Supervised training method/tool where environment is trained with only positive data points
+  and once a data point which shouldn't belong to the current set is seen, it detects an anomaly.
+
+
+This is the driver program for the project.
+rus as:
+  python driver.py
+  
+  [arguments]   [default]   [options]
+   --backbone     resnet      resnet/vgg
+   --dataset      food5k      food5k/PascalVOC
+   --task         anomaly     anomaly/cluster
+   --subtask      novelty     novelty/outlier
+
+"""
 
 import warnings
 import numpy as np
@@ -25,6 +55,7 @@ def arguments():
   parser.add_argument("--backbone", default="resnet",help="Specify the backbone: vgg/resnet")
   parser.add_argument("--dataset", default="food5k",help="Specify the dataset: food5k/PascalVOC")
   parser.add_argument("--task", default="anomaly",help="Specify the task: anomaly/cluster")
+  parser.add_argument("--subtask", default="novelty",help="Specify the subtask: novelty/outlier")
   return(parser)
 
 if __name__ == '__main__':
@@ -33,9 +64,9 @@ if __name__ == '__main__':
   args = parser.parse_args()
   
   if args.dataset == "PascalVOC" :
-    (x_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_anomaly_data()
+    (x_train,y_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_anomaly_data()
   else:
-    (x_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_data()
+    (x_train,y_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile) = load_data()
 
   if args.backbone == "vgg":
     model = VGG16(include_top=False, weights='imagenet')
@@ -49,10 +80,13 @@ if __name__ == '__main__':
       
     features_test_array = model.predict(x_test)
     features_test_array = features_test_array.reshape(num_test_samples, -1)
-    # print('test array shape: ',features_test_array.shape)
-    # print('train array shape: ',features_train_array.shape)
-    #GridSearch(features_train_array,features_test_array)
-    Analyze(features_train_array,features_test_array,y_test,testoutputfile)
+    estimator_str = "svc"
+    if args.subtask == "outlier":
+      estimator_str = "isolationforest"
+
+    estimator_params = GridSearch(features_train_array,y_train,estimator_str)
+
+    Analyze(estimator_str,estimator_params,features_train_array,y_train,features_test_array,y_test,testoutputfile)
    
 
   if args.task == "cluster":

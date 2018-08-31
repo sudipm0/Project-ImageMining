@@ -1,4 +1,4 @@
-# Efficient Image Mining & Classification Techniques#
+# Efficient Image Mining & Classification Techniques #
 
 **Project Goal**:
   The project aims to study on below topics/problems:

@@ -1,5 +1,5 @@
 """ 
-Project: Effifient Image Mining & Classification Techniques
+Project: Efficient Image Mining & Classification Techniques
 Project Goal:
   The project aims to study on below topics/problems:
     1. If a new image is added to a folder, is it causing anomaly in the existing dataset? e.g. training dataset is already labeled

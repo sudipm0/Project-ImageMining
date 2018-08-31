@@ -10,10 +10,12 @@ import csv
 from tensorflow.python.keras import backend as K
 from keras.preprocessing import image
 from imagenet_utils import decode_predictions, preprocess_input
-
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def load_anomaly_data():
 	cwd = os.getcwd()
+	plt.ioff()
 	path = cwd+'\\images\\'
 	saveddatapath ='SavedData\\AnomalyData'
 	trainingdir = 'VOC2007\\JPEGImages'
@@ -66,7 +68,12 @@ def load_anomaly_data():
 					y_test[(i-1):i] = -1		
 					writer.writerow([img_path, '1'])	#let's write everything positive		
 					i += 1
-	
+	df = pd.read_csv(testoutputfile, names=['Images', 'Class'])
+	df = df.groupby(['Class']).size().reset_index(name='ClassCount')
+	output_img_file_name = 'testdata.png'
+	df.plot(kind='bar',x='Class',y='ClassCount',color='green',title ='Test Data for reference')	
+	plt.savefig(os.path.join(saveddatafolder,output_img_file_name))
+
 	return (x_train,y_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile)
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 """ 
-Project: Efficient Image Mining & Classification Techniques
+Project: Effifient Image Mining & Classification Techniques
 Project Goal:
   The project aims to study on below topics/problems:
     1. If a new image is added to a folder, is it causing anomaly in the existing dataset? e.g. training dataset is already labeled
@@ -84,11 +84,10 @@ if __name__ == '__main__':
     if args.subtask == "outlier":
       estimator_str = "isolationforest"
 
-    estimator_params = GridSearch(features_train_array,y_train,estimator_str)
+    #estimator_params = GridSearch(features_train_array,y_train,estimator_str)
 
-    Analyze(estimator_str,estimator_params,features_train_array,y_train,features_test_array,y_test,testoutputfile)
+    Analyze(args,estimator_str,features_train_array,y_train,features_test_array,y_test,testoutputfile)
    
-
   if args.task == "cluster":
     features_train_array = model.predict(x_train)    
     features_train_array_np = np.array(features_train_array)

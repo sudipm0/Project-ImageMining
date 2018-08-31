@@ -11,13 +11,15 @@ import csv
 from tensorflow.python.keras import backend as K
 from keras.preprocessing import image
 from imagenet_utils import decode_predictions, preprocess_input
-
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def load_data():
 	cwd = os.getcwd()
+	plt.ioff()
 	path = cwd+'\\images\\'
 	saveddatapath ='SavedData\\Food5k'
-	trainingdir = 'Food-5K\\training'
+	trainingdir = 'Food-5K\\training\\food'
 	testdir = 'Food-5K\\validation'
 	testoutputfile = 'test_data_food5k.csv'
 
@@ -40,38 +42,18 @@ def load_data():
 		os.makedirs(saveddatafolder)
 
 	# #Load up training data samples
-	# for i in range(num_train_samples):
-	# 	try:
-	# 		img_path = os.path.join(path,trainingdir, '1_' + str(i)+'.jpg')
-	# 		#print('Image path: ' + img_path)
-	# 		img = image.load_img(img_path, target_size=(224, 224))
-	# 		x = image.img_to_array(img)
-	# 		x = np.expand_dims(x, axis=0)
-	# 		x = preprocess_input(x)
-	# 		x_train[(i-1):i, :, :, :] = x
-	# 	except FileNotFoundError:
-	# 		print("The file does not exist",img_path)
-	#Load up training data samples
-	i = 0
-	with open(testoutputfile, mode='w') as test_file:
-		writer = csv.writer(test_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL,lineterminator='\n')
-		for path, dirs, files in os.walk(testfolder):
-			for file in files:
-				if file.endswith(".jpg"):
-					label = file[0:file.find("_")]
-					if label == '1':
-						label = 1
-					else:
-						label = -1
-					img_path = os.path.join(path, file)
-					img = image.load_img(img_path, target_size=(224, 224))
-					x = image.img_to_array(img)
-					x = np.expand_dims(x, axis=0)
-					x = preprocess_input(x)
-					x_train[(i-1):i, :, :, :] = x
-					y_train[(i-1) :i] = label
-					writer.writerow([img_path, '1'])	#let's write everything positive
-					i += 1
+	for i in range(num_train_samples):
+		try:
+			img_path = os.path.join(path,trainingdir, '1_' + str(i)+'.jpg')
+			#print('Image path: ' + img_path)
+			img = image.load_img(img_path, target_size=(224, 224))
+			x = image.img_to_array(img)
+			x = np.expand_dims(x, axis=0)
+			x = preprocess_input(x)
+			x_train[(i-1):i, :, :, :] = x
+		except FileNotFoundError:
+			print("The file does not exist",img_path)
+	
 
 
 	#Load up test data sample from testdir
@@ -101,6 +83,12 @@ def load_data():
 	np.save(os.path.join(saveddatafolder,'x_train'),x_train,allow_pickle=True)
 	np.save(os.path.join(saveddatafolder,'x_test'),x_test,allow_pickle=True)
 	np.save(os.path.join(saveddatafolder,'y_test'),y_test,allow_pickle=True)
+	
+	df = pd.read_csv(testoutputfile, names=['Images', 'Class'])
+	df = df.groupby(['Class']).size().reset_index(name='ClassCount')
+	output_img_file_name = 'testdata.png'
+	df.plot(kind='bar',x='Class',y='ClassCount',color='green',title ='Test Data for reference')	
+	plt.savefig(os.path.join(saveddatafolder,output_img_file_name))
 
 	return (x_train,y_train,num_train_samples,x_test,y_test,num_test_samples,testoutputfile)
 
